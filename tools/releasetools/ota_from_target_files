@@ -383,13 +383,41 @@ def WriteFullOTAPackage(input_zip, output_zip):
   if OPTIONS.wipe_user_data:
     script.FormatPartition("/data")
 
+  script.Print("                                                  ")
+  script.Print("                                                  ")
+  script.Print("==================================================")
+  script.Print("   _____   _____  _____.__       .__  __          ")
+  script.Print("  /  _  \_/ _____/ ____|__| ____ |___/  |_ ___.__.")
+  script.Print(" /  /_\  \   __\\   __\|  |/    \|  \   __<   |  |")
+  script.Print("/    |    |  |   |  |  |  |   |  |  ||  |  \___  |")
+  script.Print("\____|__  |__|   |__|  |__|___|  |__||__|  / ____|")
+  script.Print("      __\/_____            .__ \/          \/     ")
+  script.Print("     /   _____/ ___________|__| ____   ______     ")
+  script.Print("     \_____  \_/ __ \_  __ |  _/ __ \ /  ___/     ")
+  script.Print("     /        \  ___/|  | \|  \  ___/ \___ \      ")
+  script.Print("    /_______  /\___  |__|  |__|\___  /____  >     ")
+  script.Print("            \/     \/              \/     \/      ")
+  script.Print("                 JellyBean ROM                    ")
+  script.Print("          By: Android Developer Alliance          ")
+  script.Print("     http://www.androiddeveloperalliance.org      ")
+  script.Print("==================================================")
+  script.Print("                                                  ")
+  script.Print("                                                  ")
+  script.Print("                                                  ")
+  script.Print("                                                  ")
+
+  script.Print("Erasing System...")
+
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
 
   script.FormatPartition("/system")
+  script.Print("Mounting System...")
   script.Mount("/system")
+  script.ShowProgress(0.5, 40)
+  script.Print("Installing System...")
   script.UnpackPackageDir("system", "/system")
-
+  script.Print("Creating Symlinks...")
   symlinks = CopySystemFiles(input_zip, output_zip)
   script.MakeSymlinks(symlinks)
 
@@ -398,6 +426,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   Item.GetMetadata(input_zip)
   Item.Get("system").SetPermissions(script)
+  script.SetPermissionsRecursive("/system/etc/init.d", 0, 0, 0755, 0555)
 
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
