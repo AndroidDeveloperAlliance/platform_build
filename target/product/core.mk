@@ -31,6 +31,7 @@ PRODUCT_PACKAGES := \
     DefaultContainerService \
     DownloadProvider \
     DownloadProviderUi \
+    Gallery \
     HTMLViewer \
     Home \
     KeyChain \
