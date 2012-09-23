@@ -93,6 +93,7 @@ OPTIONS.patch_threshold = 0.95
 OPTIONS.wipe_user_data = False
 OPTIONS.omit_prereq = False
 OPTIONS.extra_script = None
+OPTIONS.backuptool = False
 OPTIONS.aslr_mode = True
 OPTIONS.worker_threads = 3
 OPTIONS.override_device = 'auto'
@@ -389,6 +390,11 @@ def WriteFullOTAPackage(input_zip, output_zip):
   device_specific.FullOTA_Assertions()
   device_specific.FullOTA_InstallBegin()
 
+  if OPTIONS.backuptool:
+    script.Mount("/system")
+    script.RunBackup("backup")
+    script.Unmount("/system")
+
   script.ShowProgress(0.5, 0)
 
   if OPTIONS.wipe_user_data:
@@ -442,6 +448,10 @@ def WriteFullOTAPackage(input_zip, output_zip):
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
   script.ShowProgress(0.2, 0)
+
+  if OPTIONS.backuptool:
+    script.ShowProgress(0.2, 10)
+    script.RunBackup("restore")
 
   script.ShowProgress(0.2, 10)
   script.WriteRawImage("/boot", "boot.img")
@@ -797,6 +807,7 @@ def main(argv):
                                               "wipe_user_data",
                                               "no_prereq",
                                               "extra_script=",
+                                              "backup=",
                                               "worker_threads=",
                                               "override_device=",
                                               "aslr_mode=",
